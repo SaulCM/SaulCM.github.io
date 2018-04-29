@@ -1,26 +1,28 @@
 <!DOCTYPE html>
-<head>
-    <title>SaulCM</title>
-    <style>
-        body {
-          width: 800px;
-          font-family: sans-serif;
-          margin: auto;
-          color: #111111;
-          background-color: #eeeeee;
-          text-align: center;
-          line-height: 1.4;
-        }
-        a {
-          text-decoration: none;
-          display: block;
-        }
-    </style>
-</head>
-<body>
-    <h1> Projects</h1>
-    <a target="_blank" href="phaser3">Fractal Tree</a>
-    
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <title>Phaser</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <meta name="keywords" content=""/>
+    <meta name="description" content=""/>
 
-</body>
+    <link rel="icon" href="favicon.ico">
+
+    <!--Library-->
+    <script type="text/javascript" src="src/phaser.js"></script>
+
+    <script type="text/javascript" src="src/game.js"></script>
+
+  </head>
+
+  <body>
+    <script type="text/javascript">
+      window.onload = function()
+      {
+        game.run();
+      }
+    </script>
+  </body>
+
 </html>
