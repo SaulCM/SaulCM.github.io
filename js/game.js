@@ -1,130 +1,158 @@
 /**
- * Created by Jerome Renaux (jerome.renaux@gmail.com) on 25-02-18.
+ * autor: Saul Caspa, UMSS
+ * 
  */
 var Game = {};
 
+
+var player;
+var group;
+var scoreText;
+var data = {
+    r: -0.05,
+    s: -0.0012,
+    sx: 0.25,
+    x: 100,
+    y: 100
+};
+var random;
+
+var dado1;
+var dado2;
+var dado3;
+var dado4;
+var dado5;
+
+var d1=5;
+var d2=2;
+var d3=3;
+var d4=2;
+var d5=3;
+
+
 Game.preload = function(){
     Game.scene = this; // Handy reference to the scene (alternative to `this` binding)
-    this.load.image('tileset', 'assets/gridtiles.png');
-    this.load.tilemapTiledJSON('map', 'assets/map.json');
-    this.load.image('phaserguy', 'assets/phaserguy.png');
+
+    this.load.image('fondo', 'assets/mesa.png');
+    this.load.image('chart', 'assets/cart.png');
+    this.load.image('cubilete','assets/cubilete.png')
+    this.load.image('dado1', 'assets/dado1.png');
+    this.load.image('dado2', 'assets/dado2.png');
+    this.load.image('dado3', 'assets/dado3.png');
+    this.load.image('dado4', 'assets/dado4.png');
+    this.load.image('dado5', 'assets/dado5.png');
+    this.load.image('dado6', 'assets/dado6.png');
+    this.load.spritesheet('dados', 'assets/dados.png', { frameWidth: 42.76, frameHeight: 42});
 };
 
 Game.create = function(){
-    // Handles the clicks on the map to make the character move
-    this.input.on('pointerup',Game.handleClick);
+    this.add.image(320, 320, 'fondo');
+    this.add.image(200, 400, 'chart');
+    this.add.image(550,400,'cubilete');
+   
+        this.anims.create({
+            key: 'roll1',
+            frames: this.anims.generateFrameNumbers('dados', { start: 0, end: 5 }),
+            frameRate: 10,
+            repeat: 2
+        });
+        this.anims.create({
+            key: 'roll2',
+            frames: this.anims.generateFrameNumbers('dados', { start: 0, end: 5 }),
+            frameRate: 9,
+            repeat: 2
+        });
+        this.anims.create({
+            key: 'roll3',
+            frames: this.anims.generateFrameNumbers('dados', { start: 0, end: 5 }),
+            frameRate: 8,
+            repeat: 2
+        });
 
-    Game.camera = this.cameras.main;
-    Game.camera.setBounds(0, 0, 20*32, 20*32);
+    //crearanimacionesdado();
+    //lanzardados();
+    dado1 = this.add.image(500,200,calculardado(d1),this);
+    dado2 = this.add.image(550,200,calculardado(d2),this);
+    dado3 = this.add.image(600,200,calculardado(d3),this);
+    dado4 = this.add.image(525,250,calculardado(d4),this);
+    dado5 = this.add.image(575,250,calculardado(d5),this);
+        
+    //Game.cargarimagenes(d1,d2,d3,d4,d5);
+    this.input.on('pointerdown', function (pointer, gameObject) {
+        
+                dado1 = this.add.image(500,200,calculardado(Phaser.Math.Between(0,6)),this)
+                dado2 = this.add.image(550,200,calculardado(Phaser.Math.Between(0,6)),this)
+                dado3 = this.add.image(600,200,calculardado(Phaser.Math.Between(0,6)),this)
+                dado4 = this.add.image(525,250,calculardado(Phaser.Math.Between(0,6)),this)
+                dado5 = this.add.image(575,250,calculardado(Phaser.Math.Between(0,6)),this)
+        
+            }, this);
 
-    var phaserGuy = this.add.image(32,32,'phaserguy');
-    phaserGuy.setDepth(1);
-    phaserGuy.setOrigin(0,0.5);
-    Game.camera.startFollow(phaserGuy);
-    Game.player = phaserGuy;
+        //  this.setTimeout(function () {
+        //    dado1 = this.add.image(500,200,'dado5').setInteractive();
+        //   },2500);
 
-    // Display map
-    Game.map = Game.scene.make.tilemap({ key: 'map'});
-    // The first parameter is the name of the tileset in Tiled and the second parameter is the key
-    // of the tileset image used when loading the file in preload.
-    var tiles = Game.map.addTilesetImage('tiles', 'tileset');
-    Game.map.createStaticLayer(0, tiles, 0,0);
+       // this.input.on('gameobjectdown', function (pointer, gameObject) {
+     //   gameObject.destroy();
+   // });
 
-    // Marker that will follow the mouse
-    Game.marker = this.add.graphics();
-    Game.marker.lineStyle(3, 0xffffff, 1);
-    Game.marker.strokeRect(0, 0, Game.map.tileWidth, Game.map.tileHeight);
 
-    // ### Pathfinding stuff ###
-    // Initializing the pathfinder
-    Game.finder = new EasyStar.js();
+           // this.add.sprite(400, 300, 'dados').play('roll');
 
-    // We create the 2D array representing all the tiles of our map
-    var grid = [];
-    for(var y = 0; y < Game.map.height; y++){
-        var col = [];
-        for(var x = 0; x < Game.map.width; x++){
-            // In each cell we store the ID of the tile, which corresponds
-            // to its index in the tileset of the map ("ID" field in Tiled)
-            col.push(Game.getTileID(x,y));
-        }
-        grid.push(col);
-    }
-    Game.finder.setGrid(grid);
+           // Game.camera = this.cameras.main;
+           // Game.camera.setBounds(0, 0, 20*32, 20*32);
 
-    var tileset = Game.map.tilesets[0];
-    var properties = tileset.tileProperties;
-    var acceptableTiles = [];
+    scoreText = this.add.text(40, 140, 'balas', {fontSize: '25px', fill: '#000' });
+    scoreText = this.add.text(150, 140, 'escalera', {fontSize: '25px', fill: '#000' });
+    scoreText = this.add.text(290, 140, 'cuadras', {fontSize: '25px', fill: '#000' });
+    scoreText = this.add.text(40, 260, 'tontos', {fontSize: '25px', fill: '#000' });
+    scoreText = this.add.text(165, 260, 'full', {fontSize: '25px', fill: '#000' });
+    scoreText = this.add.text(290, 260, 'quinas', {fontSize: '25px', fill: '#000' });
+    scoreText = this.add.text(40, 380, 'trenes', {fontSize: '25px', fill: '#000' });
+    scoreText = this.add.text(165, 380, 'poker', {fontSize: '25px', fill: '#000' });
+    scoreText = this.add.text(290, 380, 'senas', {fontSize: '25px', fill: '#000' });
+    scoreText = this.add.text(130, 540, 'grande1', {fontSize: '25px', fill: '#000' });
+    scoreText = this.add.text(270, 540, 'grande2', {fontSize: '25px', fill: '#000' });
 
-    // We need to list all the tile IDs that can be walked on. Let's iterate over all of them
-    // and see what properties have been entered in Tiled.
-    for(var i = tileset.firstgid-1; i < tiles.total; i++){ // firstgid and total are fields from Tiled that indicate the range of IDs that the tiles can take in that tileset
-        if(!properties.hasOwnProperty(i)) {
-            // If there is no property indicated at all, it means it's a walkable tile
-            acceptableTiles.push(i+1);
-            continue;
-        }
-        if(!properties[i].collide) acceptableTiles.push(i+1);
-        if(properties[i].cost) Game.finder.setTileCost(i+1, properties[i].cost); // If there is a cost attached to the tile, let's register it
-    }
-    Game.finder.setAcceptableTiles(acceptableTiles);
 };
+
 
 Game.update = function(){
-    var worldPoint = this.input.activePointer.positionToCamera(this.cameras.main);
 
-    // Rounds down to nearest tile
-    var pointerTileX = Game.map.worldToTileX(worldPoint.x);
-    var pointerTileY = Game.map.worldToTileY(worldPoint.y);
-    Game.marker.x = Game.map.tileToWorldX(pointerTileX);
-    Game.marker.y = Game.map.tileToWorldY(pointerTileY);
-    Game.marker.setVisible(!Game.checkCollision(pointerTileX,pointerTileY));
+    //if()
+    //dado1 = this.add.sprite(500, 200,'dados').play('roll');
+
+   
 };
+function roll()
+{   dado1 = this.add.sprite(550, 150,'dados').play('roll1');
+    dado2 = this.add.sprite(500, 200,'dados').play('roll2');
+    dado3 = this.add.sprite(550, 200,'dados').play('roll3');
+    dado4 = this.add.sprite(600, 200,'dados').play('roll1');
+    dado5 = this.add.sprite(525, 250,'dados').play('roll2');
+    dado6 = this.add.sprite(575, 250,'dados').play('roll3');
 
-Game.checkCollision = function(x,y){
-    var tile = Game.map.getTileAt(x, y);
-    return tile.properties.collide == true;
 };
-
-Game.getTileID = function(x,y){
-    var tile = Game.map.getTileAt(x, y);
-    return tile.index;
+function cargarimagenes(da1,da2,da3,da4,da5)
+{
+    dado1 = this.add.image(500,200,da1).setInteractive();
+    dado2 = this.add.image(550,200,da2).setInteractive();
+    dado3 = this.add.image(600,200,da3).setInteractive();
+    dado4 = this.add.image(525,250,da4).setInteractive();
+    dado5 = this.add.image(575,250,da5).setInteractive();    
 };
-
-Game.handleClick = function(pointer){
-    var x = Game.camera.scrollX + pointer.x;
-    var y = Game.camera.scrollY + pointer.y;
-    var toX = Math.floor(x/32);
-    var toY = Math.floor(y/32);
-    var fromX = Math.floor(Game.player.x/32);
-    var fromY = Math.floor(Game.player.y/32);
-    console.log('going from ('+fromX+','+fromY+') to ('+toX+','+toY+')');
-
-    Game.finder.findPath(fromX, fromY, toX, toY, function( path ) {
-        if (path === null) {
-            console.warn("Path was not found.");
-        } else {
-            console.log(path);
-            Game.moveCharacter(path);
-        }
-    });
-    Game.finder.calculate(); // don't forget, otherwise nothing happens
-};
-
-Game.moveCharacter = function(path){
-    // Sets up a list of tweens, one for each tile to walk, that will be chained by the timeline
-    var tweens = [];
-    for(var i = 0; i < path.length-1; i++){
-        var ex = path[i+1].x;
-        var ey = path[i+1].y;
-        tweens.push({
-            targets: Game.player,
-            x: {value: ex*Game.map.tileWidth, duration: 200},
-            y: {value: ey*Game.map.tileHeight, duration: 200}
-        });
-    }
-
-    Game.scene.tweens.timeline({
-        tweens: tweens
-    });
-};
+function calculardado(dd)
+{  
+  if(dd==1)
+  {return 'dado1';}
+  if(dd==2)
+  {return 'dado2';}
+  if(dd==3)
+  {return 'dado3';}
+  if(dd==4)
+  {return 'dado4';}
+  if(dd==5)
+  {return 'dado5';}
+  if(dd==6)
+  {return 'dado6';}
+}
